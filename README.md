@@ -1,4 +1,4 @@
-# )x0 Smart Contracts & Dapp
+# 0x0 Smart Contracts & Dapp
 
 smart contracts used in 0x0 NFT Project
 
