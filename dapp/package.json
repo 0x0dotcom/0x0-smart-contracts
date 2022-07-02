@@ -1,0 +1,35 @@
+{
+  "name": "oxo",
+  "version": "1.0.0",
+  "description": "oxo minting dapp",
+  "author": "oxo",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/pwa": "^3.3.5",
+    "@nuxtjs/toast": "^3.3.1",
+    "core-js": "^3.21.1",
+    "csv-parser": "^3.0.0",
+    "ethers": "^5.5.4",
+    "ncu": "^0.2.1",
+    "nuxt": "^2.15.8",
+    "sass": "^1.49.9",
+    "sass-loader": "^10",
+    "vuex-persistedstate": "^4.0.0-beta.3",
+    "web3": "^1.7.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^8.0.0",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/vuetify": "^1.12.3",
+    "babel-eslint": "^10.1.0",
+    "prettier": "^2.5.1"
+  }
+}
