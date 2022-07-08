@@ -1,8 +1,0 @@
-{
-	"name": "0x0 OFFICIAL",
-	"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-	"image": "ipfs://xxxxxxxxxxxxxxx",
-	"external_link": "https://example.com",
-	"seller_fee_basis_points": 300,
-	"fee_recipient": "0x4299Ff76121fF99781ab7f2c28E17b9dA448c6a6"
-}

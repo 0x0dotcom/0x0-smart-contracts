@@ -24,8 +24,9 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
 	bytes32 public root = 0x04d36475a9b173321940752c4e4f1228a2d8415269dd2746f152436c3d77f90c;
 
 	string public _contractBaseURI = "ipfs://to_be_updated_later/";
-	string public _unrevealedURI = "ipfs://xxxxxxxxxxxxxxx";
-	string public _contractURI = "ipfs://xxxxxxxxxxxxxxxx";
+	string public _unrevealedURI = "https://highflyer-nft-test.s3.eu-central-1.amazonaws.com/1.json";
+	string public _contractURI =
+		"https://highflyer-nft-test.s3.eu-central-1.amazonaws.com/contract_uri.json";
 
 	uint256 public maxSupply = 5000;
 	uint256 public preSaleSupply = 1000;
@@ -144,13 +145,14 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
 	/**
 	 * ADMIN FUNCTIONS
 	 */
-	function setBaseURIs(string memory newBaseURI, string memory unrevealed) external onlyOwner {
+	function setImportantURIs(
+		string memory newBaseURI,
+		string memory newContractURI,
+		string memory newUnrevealed
+	) external onlyOwner {
 		_contractBaseURI = newBaseURI;
-		_unrevealedURI = unrevealed;
-	}
-
-	function setContractURI(string memory newuri) external onlyOwner {
-		_contractURI = newuri;
+		_contractURI = newContractURI;
+		_unrevealedURI = newUnrevealed;
 	}
 
 	//recover lost erc20. getting them back chance: very low
@@ -203,4 +205,6 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
 	function _startTokenId() internal view virtual override returns (uint256) {
 		return 1;
 	}
+
+	function buildNumber1() internal view {}
 }

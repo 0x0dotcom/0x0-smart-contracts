@@ -60,6 +60,11 @@ module.exports = {
 			timeout: 25000,
 			accounts: [process.env.PRIVATE_KEY],
 		},
+		avax_test: {
+			url: process.env.AVAX_TEST,
+			network_id: 43114,
+			accounts: [process.env.PRIVATE_KEY],
+		},
 	},
 
 	gasReporter: {
@@ -73,6 +78,6 @@ module.exports = {
 		timeout: 25000,
 	},
 	etherscan: {
-		apiKey: process.env.ETHERSCAN_KEY,
+		apiKey: process.env.SNOWTRACE_KEY,
 	},
 }

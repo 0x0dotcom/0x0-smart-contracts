@@ -7,12 +7,11 @@
 // export const OPENSEA_LINK = 'https://opensea.io/collection/xxxxxxxxx'
 
 //rinkeby!
-export const CONTRACT_ADDR = '0x413F0b9Fee2006a7EFef56B900709D4beE8bC1b7'
-export const NETWORK_ID = 4
-export const RPC_PROVIDER =
-  'https://eth-rinkeby.alchemyapi.io/v2/zd8mzR67bkZlNs0TZj1fVqpRu1xsLZ9V'
-export const EXPLORER_URI = 'https://rinkeby.etherscan.io'
-export const OPENSEA_LINK = 'https://testnets.opensea.io/assets/XXXXXXXXXXXXXX/'
+export const CONTRACT_ADDR = '0xe5cc22F1213C1be7bCd66382788CA3bd5c6261b0'
+export const NETWORK_ID = 43114
+export const RPC_PROVIDER = 'https://api.avax-test.network/ext/bc/C/rpc'
+export const EXPLORER_URI = 'https://testnet.snowtrace.io'
+export const OPENSEA_LINK = 'https://????.opensea.io/assets/XXXXXXXXXXXXXX/'
 
 //polygon tesetnet
 // export const CONTRACT_ADDR = '0xB55b154535Af83DC6d4Ab41483B778909b41ab42'
