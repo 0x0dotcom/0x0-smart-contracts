@@ -117,6 +117,9 @@
         <span style="color: grey !important"> | </span>
 
         <a href="/other/disclaimer">disclaimer</a>
+        <span style="color: grey !important"> | </span>
+
+        <a href="/affiliate">affiliate</a>
       </p>
 
       <p class="ma-5 grey--text">
@@ -152,6 +155,7 @@ export default {
     return {
       whitelist: whitelistData,
       totalMinted: 0,
+      affiliateID: null,
       amount: 1,
       isLoading: false,
       balanceOf: null,
@@ -172,18 +176,27 @@ export default {
       walletAddress: null,
       walletAddress: null,
       pricePerNFTWei: 10000000000000000,
+      affiliateBonus: 5000000000000000,
+      affiliatePrice: 15000000000000000,
       maxSupply: 1000,
       maxFlashSale: null,
       explorerURI: EXPLORER_URI,
       openseaLink: OPENSEA_LINK,
+      isAffiliatePurchase: false,
       ownedNFTs: [],
     }
   },
   async mounted() {
-    this.id = this.$route.query.id
+    this.affiliateID = this.$route.query.affiliateID
+
     this.contractAddress = CONTRACT_ADDR
 
     this.initialize()
+
+    if (this.affiliateID) {
+      //check validity of the affiliate ID
+      await this.checkAffiliateID()
+    }
 
     this.timerOperations()
     const timer = setInterval(() => {
@@ -215,12 +228,26 @@ export default {
       console.log('minted = ', this.totalMinted, ' / ', this.maxSupply)
       this.isLoading = false
     },
+    async checkAffiliateID() {
+      if (!this.isInt(this.affiliateID)) {
+        this.errorText = 'Invalid Affiliate ID'
+        this.boxError = true
+        return
+      }
+      this.pricePerNFTWei = this.affiliateBonus + this.affiliatePrice
+      this.isAffiliatePurchase = true
+    },
 
     async mintBtnPressed() {
       //TODO: modify me in timer opperations
-      await this.preSaleBuy(this.amount)
+      //await this.preSaleBuy(this.amount)
       //manual activation of next phase
-      //await this.publicSale(this.amount)
+
+      if (this.isAffiliatePurchase) {
+        await this.affiliateSale(this.amount)
+      } else {
+        await this.publicSale(this.amount)
+      }
     },
 
     async preSaleBuy(quantity) {
@@ -297,6 +324,56 @@ export default {
       }
     },
 
+    async affiliateSale(quantity) {
+      this.txHash = null
+      this.boxError = false
+      this.errorText = null
+
+      this.ethers = new ethers.providers.Web3Provider(window.ethereum, 'any')
+      await this.ethers.send('eth_requestAccounts', [])
+
+      this.signer = this.ethers.getSigner()
+      this.contract = new ethers.Contract(
+        CONTRACT_ADDR,
+        ERC721_ABI,
+        this.signer
+      )
+
+      this.isLoading = true
+      this.loadingText =
+        'sending transaction to the blockchain. please check your wallet for confirmation'
+
+      try {
+        // const gasLimit = quantity * 100000
+        this.itemPriceWei = Number(this.pricePerNFTWei)
+        const overrides = {
+          value: String(Number(quantity) * Number(this.itemPriceWei)),
+          // gasLimit: gasLimit,
+        }
+        const tx = await this.contract.affiliateBuy(
+          quantity,
+          this.affiliateID,
+          overrides
+        )
+        if (tx.hash) {
+          await this.onTxHashLogic(tx.hash)
+        }
+      } catch (err) {
+        this.isLoading = false
+        if (err.message.includes('denied')) {
+          this.$toast.info('transaction canceled')
+          this.boxError = false
+          this.errorText = null
+          return
+        } else if (err.message.includes('insufficient funds')) {
+          this.errorText = 'you do not have enough ETH for this transaction'
+        } else {
+          this.errorText = err.message
+        }
+        this.boxError = true
+      }
+    },
+
     async publicSale(quantity) {
       this.txHash = null
       this.boxError = false
@@ -367,6 +444,14 @@ export default {
         this.isLoading = false
         console.log(`Receipt error:`, er)
       }
+    },
+    isInt(value) {
+      return (
+        !isNaN(value) &&
+        parseInt(Number(value)) < 10000 &&
+        parseInt(Number(value)) == value &&
+        !isNaN(parseInt(value, 10))
+      )
     },
   },
   watch: {

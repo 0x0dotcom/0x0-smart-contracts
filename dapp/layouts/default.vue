@@ -23,15 +23,6 @@
         </v-btn>
 
         <v-btn
-          href="https://discord.com/invite/xxxxxx"
-          target="_blank"
-          fab
-          text
-        >
-          <v-icon color="primary">mdi-discord</v-icon>
-        </v-btn>
-
-        <v-btn
           large
           class="primary ma-3 black--text"
           text
@@ -58,7 +49,7 @@
       v-else
       style="background-color: transparent; text-align: center"
       class="grey--text text-body-1 text-xs-center justify-center"
-      >copyright 2022-present Ⓒ anonrobin.com
+      >copyright 2022-present Ⓒ xxxxx.com
     </v-footer>
   </v-app>
 </template>
