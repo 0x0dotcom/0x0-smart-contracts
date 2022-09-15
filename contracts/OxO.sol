@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.15;
+pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
@@ -10,13 +10,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/security/PullPayment.sol";
 import "./ERC721AQueryable.sol";
 
 //   ___  _  _  ___
 //  / _ \( \/ )/ _ \
 // ( (_) ))  (( (_) )
 //  \___/(_/\_)\___/
-contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
+contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PullPayment, PaymentSplitter {
 	using Address for address;
 	using Strings for uint256;
 	using MerkleProof for bytes32[];
@@ -33,8 +34,11 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
 
 	bool public isRevealed = false;
 
-	uint256 public presalePrice = 0.01 ether;
-	uint256 public publicPrice = 0.02 ether;
+	uint256 public presalePrice = 0.3 ether;
+	uint256 public publicPrice = 0.4 ether;
+
+	uint256 public affiliateBonus = 0.15 ether; //in ether
+	uint256 public affiliatePrice = 0.2 ether; //in ether
 
 	uint256 public presaleStartTime = block.timestamp - 1; // TODO: set it
 	uint256 public publicStartTime = block.timestamp - 1; // TODO: set it
@@ -77,7 +81,7 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
 
 		usedAddresses[msg.sender] += qty;
 		_mint(msg.sender, qty);
-	}
+	}	
 
 	/**
 	 @dev everyone can buy
@@ -88,6 +92,20 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
 		require(publicPrice * qty == msg.value, "exact amount needed");
 		require(totalSupply() + qty <= maxSupply, "out of stock");
 
+		_mint(msg.sender, qty);
+	}
+
+		/**
+	 @dev used by affiliates
+	  */
+	function affiliateBuy(uint256 qty, uint256 affiliateNFTID) external payable nonReentrant notContract {
+		require(qty <= 10, "max 10 at once");
+		require(block.timestamp >= publicStartTime, "not live");
+		require((affiliateBonus + affiliatePrice) * qty == msg.value, "exact amount needed");
+		require(totalSupply() + qty <= maxSupply, "out of stock");
+		
+		_asyncTransfer(ownerOf(affiliateNFTID), affiliateBonus * qty);
+		
 		_mint(msg.sender, qty);
 	}
 
@@ -148,11 +166,13 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
 	function setImportantURIs(
 		string memory newBaseURI,
 		string memory newContractURI,
-		string memory newUnrevealed
+		string memory newUnrevealed,
+		bool revealed
 	) external onlyOwner {
 		_contractBaseURI = newBaseURI;
 		_contractURI = newContractURI;
 		_unrevealedURI = newUnrevealed;
+		isRevealed = revealed;
 	}
 
 	//recover lost erc20. getting them back chance: very low
@@ -177,16 +197,16 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PaymentSplitter {
 		publicPrice = newPublicPrice;
 	}
 
+	//owner reserves the right to change the affiliate bonuses
+	function setAffiliateBonuses(uint256 newAffiliateBonus, uint256 newAffiliatePrice) external onlyOwner {
+		affiliateBonus = newAffiliateBonus;
+		affiliatePrice = newAffiliatePrice;
+	}
+
 	//only decrease it, no funky stuff
 	function decreaseMaxSupply(uint256 newMaxSupply) external onlyOwner {
 		require(newMaxSupply < maxSupply, "decrease only");
 		maxSupply = newMaxSupply;
-	}
-
-	//call this to reveal the jpegs
-	function setBaseURIAndReveal(string memory newBaseURI, bool revealed) external onlyOwner {
-		isRevealed = revealed;
-		_contractBaseURI = newBaseURI;
 	}
 
 	function setMerkleRoot(bytes32 _root) external onlyOwner {

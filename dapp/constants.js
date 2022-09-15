@@ -7,7 +7,7 @@
 // export const OPENSEA_LINK = 'https://opensea.io/collection/xxxxxxxxx'
 
 //rinkeby!
-export const CONTRACT_ADDR = '0xda53064e388f6bb530BfFcEf809c376335f0665B'
+export const CONTRACT_ADDR = '0x48ac88a57bF8ef1D836fF10348B03BcD77049F7f'
 export const NETWORK_ID = 43113
 export const RPC_PROVIDER = 'https://api.avax-test.network/ext/bc/C/rpc'
 export const EXPLORER_URI = 'https://testnet.snowtrace.io'

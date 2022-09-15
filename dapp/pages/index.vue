@@ -175,9 +175,9 @@ export default {
       dialogError: false,
       walletAddress: null,
       walletAddress: null,
-      pricePerNFTWei: 10000000000000000,
-      affiliateBonus: 5000000000000000,
-      affiliatePrice: 15000000000000000,
+      pricePerNFTWei: 400000000000000000,
+      affiliateBonus: 150000000000000000, //you can combine this 2 together I think...
+      affiliatePrice: 200000000000000000, //you can combine this 2 together I think...
       maxSupply: 1000,
       maxFlashSale: null,
       explorerURI: EXPLORER_URI,
@@ -241,6 +241,7 @@ export default {
     async mintBtnPressed() {
       //TODO: modify me in timer opperations
       //await this.preSaleBuy(this.amount)
+      //set priceperNft to 300000000000000000 (0.3 eth)
       //manual activation of next phase
 
       if (this.isAffiliatePurchase) {
