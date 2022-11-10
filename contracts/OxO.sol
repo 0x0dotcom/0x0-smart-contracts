@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/security/PullPayment.sol";
 import "./ERC721AQueryable.sol";
@@ -17,12 +16,12 @@ import "./ERC721AQueryable.sol";
 //  / _ \( \/ )/ _ \
 // ( (_) ))  (( (_) )
 //  \___/(_/\_)\___/
-contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PullPayment, PaymentSplitter {
+contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PullPayment  {
 	using Address for address;
 	using Strings for uint256;
 	using MerkleProof for bytes32[];
 
-	bytes32 public root = 0x04d36475a9b173321940752c4e4f1228a2d8415269dd2746f152436c3d77f90c;
+	bytes32 public root = 0x006d91eae4c28c5bd8a1c2cafa07772d2d6d1ef30779dfffa6f08f5f17b0074c;
 
 	string public _contractBaseURI = "ipfs://to_be_updated_later/";
 	string public _unrevealedURI = "https://highflyer-nft-test.s3.eu-central-1.amazonaws.com/1.json";
@@ -40,19 +39,12 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PullPayment, Payment
 	uint256 public affiliateBonus = 0.15 ether; //in ether
 	uint256 public affiliatePrice = 0.2 ether; //in ether
 
-	uint256 public presaleStartTime = block.timestamp - 1; // TODO: set it
-	uint256 public publicStartTime = block.timestamp - 1; // TODO: set it
+	uint256 public presaleStartTime = 1668168000;
+	uint256 public publicStartTime = 1670587200;
 
 	mapping(address => uint256) public usedAddresses; //merkle root check
 
-	//owner: 0x473Facf7c8A5e1330d660f0DeFa3CAc2ED528407
-	//payment splitter
-	address[] private addressList = [
-		0xdceCfa99F6bb7e33C69e184c89A9B34E80D464f4,
-		0xAEC39e71866b78A3C81916024Ad01ad266180598,
-		0xCcCA636D47c55470896fAbD907191cdb64F4A5f2
-	];
-	uint256[] private shareList = [6, 13, 81];
+
 
 	modifier notContract() {
 		require(!_isContract(msg.sender), "contract not allowed");
@@ -60,7 +52,7 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PullPayment, Payment
 		_;
 	}
 
-	constructor() ERC721A("0x0", "0x0") PaymentSplitter(addressList, shareList) {}
+	constructor() ERC721A("0x0", "0x0") {}
 
 	/**
 	 @dev only whitelisted can buy, maximum maxQty
@@ -225,6 +217,10 @@ contract OxO is ERC721AQueryable, Ownable, ReentrancyGuard, PullPayment, Payment
 	function _startTokenId() internal view virtual override returns (uint256) {
 		return 1;
 	}
-
+	
+	function withdraw() public onlyOwner {
+		uint256 balance = address(this).balance;
+		payable(msg.sender).transfer(balance);
+	}
 	function buildNumber1() internal view {}
 }

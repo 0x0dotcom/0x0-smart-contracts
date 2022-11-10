@@ -175,13 +175,15 @@ export default {
       dialogError: false,
       walletAddress: null,
       walletAddress: null,
-      pricePerNFTWei: 400000000000000000,
+      pricePerNFTWei: 300000000000000000,
       affiliateBonus: 150000000000000000, //you can combine this 2 together I think...
       affiliatePrice: 200000000000000000, //you can combine this 2 together I think...
       maxSupply: 1000,
       maxFlashSale: null,
       explorerURI: EXPLORER_URI,
       openseaLink: OPENSEA_LINK,
+      presaleStartTime: null,
+      publicStartTime: null,
       isAffiliatePurchase: false,
       ownedNFTs: [],
     }
@@ -211,7 +213,7 @@ export default {
     this.loadingText = 'retrieving smart contract state'
   },
   methods: {
-    initialize() {
+    async initialize() {
       this.provider = 'not_web3'
       this.ethers = new ethers.providers.JsonRpcProvider(
         RPC_PROVIDER,
@@ -222,10 +224,17 @@ export default {
         ERC721_ABI,
         this.ethers
       )
+
+      this.presaleStartTime = Number(await this.contract.presaleStartTime())
+      this.publicStartTime = Number(await this.contract.publicStartTime())
+
+      console.log('this.presaleStartTime', this.presaleStartTime)
+      console.log('this.publicStartTime', this.publicStartTime)
     },
     async timerOperations() {
       this.totalMinted = Number(await this.contract.totalSupply())
       console.log('minted = ', this.totalMinted, ' / ', this.maxSupply)
+      this.presaleStartTime = Number(await this.contract.presaleStartTime())
       this.isLoading = false
     },
     async checkAffiliateID() {
@@ -239,16 +248,23 @@ export default {
     },
 
     async mintBtnPressed() {
+      let now = Math.floor(Date.now() / 1000)
+      if (now < this.presaleStartTime) {
+        this.errorText = 'Presale not started yet'
+        this.boxError = true
+        return
+      }
+
       //TODO: modify me in timer opperations
-      //await this.preSaleBuy(this.amount)
+      await this.preSaleBuy(this.amount)
       //set priceperNft to 300000000000000000 (0.3 eth)
       //manual activation of next phase
 
-      if (this.isAffiliatePurchase) {
-        await this.affiliateSale(this.amount)
-      } else {
-        await this.publicSale(this.amount)
-      }
+      // if (this.isAffiliatePurchase) {
+      //   await this.affiliateSale(this.amount)
+      // } else {
+      //   await this.publicSale(this.amount)
+      // }
     },
 
     async preSaleBuy(quantity) {
