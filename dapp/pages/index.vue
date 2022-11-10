@@ -119,7 +119,7 @@
         <a href="/other/disclaimer">disclaimer</a>
         <span style="color: grey !important"> | </span>
 
-        <a href="/affiliate">affiliate</a>
+        <!-- <a href="/affiliate">affiliate</a> -->
       </p>
 
       <p class="ma-5 grey--text">
